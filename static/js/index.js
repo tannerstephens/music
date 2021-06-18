@@ -19,14 +19,6 @@ const template = `
 </div>
 `;
 
-const getColor = seed => {
-  const rng = new Math.seedrandom(seed);
-
-  return "hsl(" + 360 * rng() + ',' +
-             (40 + 50 * rng()) + '%,' +
-             (55) + '%)'
-};
-
 window.onload = () => {
   const rootElement = document.getElementById('root');
   const ejsTemplate = ejs.compile(template);
@@ -46,21 +38,27 @@ window.onload = () => {
         rootElement.innerHTML += ejsTemplate(song);
 
         setTimeout(() => {
-          const color = getColor(song.sha);
-
+          const color = '#eee';
           const waveSurfer = WaveSurfer.create({
             container: `#s${song.sha}`,
             waveColor: color,
             progressColor: color
           });
 
+          let mouseIn = false;
+
           waveSurfer.load(`songs/${song.name}`);
 
           waveSurfers.push(waveSurfer);
 
           waveSurfer.on('finish', () => {
-            playButton.classList.remove('is-hidden');
-            pauseButton.classList.add('is-hidden');
+            if(mouseIn) {
+              playButton.classList.remove('is-hidden');
+              pauseButton.classList.add('is-hidden');
+            } else {
+              playButton.classList.add('is-hidden');
+              pauseButton.classList.add('is-hidden');
+            }
           });
 
           const playButton = document.getElementById(`play${song.sha}`);
@@ -69,6 +67,7 @@ window.onload = () => {
           const controls = document.getElementById(`control${song.sha}`);
 
           controls.onmouseover = () => {
+            mouseIn = true;
             if(waveSurfer.isPlaying()) {
               pauseButton.classList.remove('is-hidden');
             } else {
@@ -77,6 +76,7 @@ window.onload = () => {
           }
 
           controls.onmouseout = () => {
+            mouseIn = false;
             playButton.classList.add('is-hidden');
             pauseButton.classList.add('is-hidden');
           }
