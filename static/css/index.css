@@ -1,0 +1,20 @@
+html {
+  background-color: #eee;
+}
+
+img.back {
+  position: relative;
+  top: 0;
+  left: 0;
+}
+
+img.control {
+  position: absolute;
+  top: 0;
+  left: 0;
+  opacity: 0.5;
+}
+
+.box {
+  background-color: #999;
+}
