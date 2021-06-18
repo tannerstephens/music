@@ -40,6 +40,8 @@ window.onload = () => {
         cover: line.cover
       })))
     .then(songs => {
+      const waveSurfers = [];
+
       songs.forEach(song => {
         rootElement.innerHTML += ejsTemplate(song);
 
@@ -54,10 +56,19 @@ window.onload = () => {
 
           waveSurfer.load(`songs/${song.name}`);
 
+          waveSurfers.push(waveSurfer);
+
+          waveSurfer.on('finish', () => {
+            playButton.classList.remove('is-hidden');
+            pauseButton.classList.add('is-hidden');
+          });
+
           const playButton = document.getElementById(`play${song.sha}`);
           const pauseButton = document.getElementById(`pause${song.sha}`);
 
-          document.getElementById(`control${song.sha}`).onmouseover = () => {
+          const controls = document.getElementById(`control${song.sha}`);
+
+          controls.onmouseover = () => {
             if(waveSurfer.isPlaying()) {
               pauseButton.classList.remove('is-hidden');
             } else {
@@ -65,21 +76,24 @@ window.onload = () => {
             }
           }
 
-          document.getElementById(`control${song.sha}`).onmouseout = () => {
+          controls.onmouseout = () => {
             playButton.classList.add('is-hidden');
             pauseButton.classList.add('is-hidden');
           }
 
-          playButton.onclick = () => {
-            waveSurfer.play();
-            pauseButton.classList.remove('is-hidden');
-            playButton.classList.add('is-hidden');
-          }
-
-          pauseButton.onclick = () => {
-            playButton.classList.remove('is-hidden');
-            pauseButton.classList.add('is-hidden');
-            waveSurfer.pause();
+          controls.onclick = () => {
+            if(waveSurfer.isPlaying()) {
+              playButton.classList.remove('is-hidden');
+              pauseButton.classList.add('is-hidden');
+              waveSurfer.pause();
+            } else {
+              waveSurfers.forEach(ws => {
+                ws.pause();
+              });
+              waveSurfer.play();
+              pauseButton.classList.remove('is-hidden');
+              playButton.classList.add('is-hidden');
+            }
           }
         }, 5);
       });
