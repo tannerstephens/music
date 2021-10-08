@@ -23,7 +23,16 @@ window.onload = () => {
   const rootElement = document.getElementById('root');
   const ejsTemplate = ejs.compile(template);
 
-  fetch('songs/songs.json')
+  const headers = new Headers();
+  headers.append('pragma', 'no-cache');
+  headers.append('cache-control', 'no-cache');
+
+  const requestInit = {
+    method: 'get',
+    headers
+  };
+
+  fetch('songs/songs.json', requestInit)
     .then(response => response.json())
     .then(data => data.map(line => ({
         sha: MD5(line.file),
